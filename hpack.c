@@ -136,6 +136,7 @@ hpack_headerblock_free(struct hpack_headerblock *hdrs)
 		TAILQ_REMOVE(hdrs, hdr, hdr_entry);
 		hpack_header_free(hdr);
 	}
+	free(hdrs);
 }
 
 struct hpack_table *
@@ -597,6 +598,8 @@ hpack_decode_buf(struct hbuf *buf, struct hpack_table *hpack)
 		if (hpack_table_setsize(i, hpack) == -1)
 			goto fail;
 
+		hpack_header_free(hdr);
+		hpack->htb_next = NULL;
 		return (0);
 	}
 
@@ -709,6 +712,7 @@ hpack_encode(struct hpack_headerblock *hdrs, size_t *encoded_len,
 			goto fail;
 	}
 
+	hpack_table_free(ctx);
 	return (hbuf_release(hbuf, encoded_len));
  fail:
 	hpack_table_free(ctx);
