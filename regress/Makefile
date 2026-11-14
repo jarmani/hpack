@@ -8,9 +8,19 @@ PROG=			hpacktest
 SRCS+=			main.c jsmn.c json.c
 CFLAGS+=		-DJSMN_PARENT_LINKS
 
-REGRESS_TARGETS?=	test
+REGRESS_TARGETS?=	test run-rfc7541
 
 test: ${PROG}
 	./${PROG} -v ${HPACKTESTDIR}
+
+# Decode the examples of RFC 7541 Appendix C,
+# and encode the header lists again.
+CLEANFILES+=		hpackvectors
+
+hpackvectors: hpackvectors.c hpack.c
+	${CC} ${CFLAGS} -o $@ ${.ALLSRC}
+
+run-rfc7541: hpackvectors
+	./hpackvectors ${.CURDIR}/rfc7541.vectors
 
 .include <bsd.regress.mk>
