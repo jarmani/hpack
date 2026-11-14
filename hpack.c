@@ -179,8 +179,7 @@ hpack_table_getbyid(long index, struct hpack_index *idbuf,
 		/* Static table */
 		id = &static_table[index - 1];
 		if (id->hpi_id != index)
-			errx(1, "corrupted HPACK static table %ld != %ld",
-			    id->hpi_id, index);
+			return (NULL);
 	} else {
 		/* Dynamic table */
 		TAILQ_FOREACH_REVERSE(hdr, hpack->htb_dynamic,
@@ -309,7 +308,7 @@ hpack_table_evict(long size, long newsize, struct hpack_table *hpack)
 	if (TAILQ_EMPTY(hpack->htb_dynamic) &&
 	    hpack->htb_dynamic_entries != 0 &&
 	    hpack->htb_dynamic_size != 0)
-		errx(1, "corrupted HPACK dynamic table");
+		return (-1);
 
 	return (0);
 }
@@ -437,7 +436,7 @@ hpack_decode_index(struct hbuf *buf, unsigned char prefix,
 	}
 
 	if (hdr == NULL || hdr->hdr_name != NULL || hdr->hdr_value != NULL)
-		errx(1, "invalid header");
+		return (-1);
 
 	if ((hdr->hdr_name = strdup(id->hpi_name)) == NULL)
 		return (-1);
@@ -501,7 +500,7 @@ hpack_decode_literal(struct hbuf *buf, unsigned char prefix,
 	if (i == 0) {
 		if (hdr == NULL ||
 		    hdr->hdr_name != NULL || hdr->hdr_value != NULL)
-			errx(1, "invalid header");
+			return (-1);
 
 		if ((str = hpack_decode_str(buf,
 		    HPACK_M_LITERAL)) == NULL)
@@ -845,7 +844,7 @@ hpack_huffman_decode(unsigned char *buf, size_t len, size_t *decoded_len)
 	struct hbuf			*hbuf = NULL;
 
 	if ((root = node = hpack_global.hpack_huffman) == NULL)
-		errx(1, "hpack not initialized");
+		return (NULL);
 
 	if ((hbuf = hbuf_new(NULL, len)) == NULL)
 		return (NULL);
