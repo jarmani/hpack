@@ -582,12 +582,13 @@ hpack_decode_buf(struct hbuf *buf, struct hpack_table *hpack)
 	}
 
 	/* 6.2.3. Literal Header Field Never Indexed */
-	else if ((c & HPACK_M_LITERAL_NO_INDEX) == HPACK_F_LITERAL_NO_INDEX) {
+	else if ((c & HPACK_M_LITERAL_NEVER_INDEX) ==
+	    HPACK_F_LITERAL_NEVER_INDEX) {
 		DPRINTF("%s: 0x%02x: 6.2.3 literal never indexed", __func__, c);
 
 		/* 4 bit index */
 		if (hpack_decode_literal(buf,
-		    HPACK_M_LITERAL_NO_INDEX, hpack) == -1)
+		    HPACK_M_LITERAL_NEVER_INDEX, hpack) == -1)
 			goto fail;
 		hdr->hdr_index = HPACK_NEVER_INDEX;
 	}

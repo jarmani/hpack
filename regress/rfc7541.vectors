@@ -16,6 +16,13 @@ header :path /sample/path
 size 0
 end
 
+# RFC 7541 C.2.3
+table 4096 new
+hex 100870617373776f726406736563726574
+header password secret
+size 0
+end
+
 # RFC 7541 C.2.4
 table 4096 new
 hex 82
