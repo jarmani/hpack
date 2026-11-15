@@ -597,6 +597,10 @@ hpack_decode_buf(struct hbuf *buf, struct hpack_table *hpack)
 	else if ((c & HPACK_M_TABLE_SIZE_UPDATE) == HPACK_F_TABLE_SIZE_UPDATE) {
 		DPRINTF("%s: 0x%02x: 6.3 dynamic table update", __func__, c);
 
+		/* Only allowed at the beginning of a header block */
+		if (!TAILQ_EMPTY(hpack->htb_headers))
+			goto fail;
+
 		/* 5 bit index */
 		if ((i = hpack_decode_int(buf,
 		    HPACK_M_TABLE_SIZE_UPDATE)) == -1)

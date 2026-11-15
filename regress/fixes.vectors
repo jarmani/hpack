@@ -14,3 +14,22 @@ table 4096 new
 hex 0fffffffffffff01
 fail
 end
+
+# test dynamic table size update after a header field
+table 4096 new
+hex 823fe11f
+fail
+end
+
+# test dynamic table size update at the beginning
+table 4096 new
+hex 3fe11f82
+header :method GET
+size 0
+end
+
+# test dynamic table size update above the maximum
+table 4096 new
+hex 3fe21f82
+fail
+end
