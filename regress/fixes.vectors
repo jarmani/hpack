@@ -1,0 +1,10 @@
+# Tests for fixes in the HPACK library.
+# table <max size> <new|keep>, hex <block>, header <name> <value>,
+# size <dynamic table size after decoding>, fail: the block is invalid.
+# A vector without hex only tests encoding and decoding of the headers.
+
+# test literal string longer than the block
+table 4096 new
+hex 400a6375
+fail
+end

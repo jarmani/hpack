@@ -1085,7 +1085,7 @@ hbuf_release(struct hbuf *buf, size_t *len)
 static int
 hbuf_readchar(struct hbuf *buf, unsigned char *c)
 {
-	if (buf->rpos + 1 > buf->size)
+	if (buf->rpos + 1 > buf->wpos)
 		return (-1);
 	*c = *(buf->data + buf->rpos);
 	return (0);
@@ -1094,7 +1094,7 @@ hbuf_readchar(struct hbuf *buf, unsigned char *c)
 static int
 hbuf_readbuf(struct hbuf *buf, unsigned char **ptr, size_t len)
 {
-	if (buf->rpos + len > buf->size)
+	if (len > buf->wpos || buf->rpos > buf->wpos - len)
 		return (-1);
 	*ptr = buf->data + buf->rpos;
 	return (0);
@@ -1103,7 +1103,7 @@ hbuf_readbuf(struct hbuf *buf, unsigned char **ptr, size_t len)
 static int
 hbuf_advance(struct hbuf *buf, size_t len)
 {
-	if (buf->rpos + len > buf->size)
+	if (len > buf->wpos || buf->rpos > buf->wpos - len)
 		return (-1);
 	buf->rpos += len;
 	return (0);
