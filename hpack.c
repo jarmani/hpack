@@ -397,16 +397,22 @@ hpack_decode_int(struct hbuf *buf, unsigned char prefix)
 	if (i >= m) {
 		m = 0;
 
-		/* Read varint bits while the 0x80 bit is set */
+		/*
+		 * Read varint bits while the 0x80 bit is set.  Values
+		 * are limited to 31 bits, enough for any length, index
+		 * or table size, so at most 5 octets are accepted.
+		 */
 		do {
-			if (i > LONG_MAX)
+			if (m > 28)
 				return (-1);
 			if (hbuf_readchar(buf, &b) == -1 ||
 			    hbuf_advance(buf, 1) == -1)
 				return (-1);
-			i += (b & ~0x80) << m;
+			i += (unsigned long)(b & ~0x80) << m;
 			m += 7;
 		} while (b & 0x80);
+		if (i > INT_MAX)
+			return (-1);
 	}
 
 	return ((long)i);

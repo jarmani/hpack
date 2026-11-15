@@ -8,3 +8,9 @@ table 4096 new
 hex 400a6375
 fail
 end
+
+# test integer longer than 31 bits
+table 4096 new
+hex 0fffffffffffff01
+fail
+end
