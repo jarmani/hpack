@@ -855,7 +855,7 @@ unsigned char *
 hpack_huffman_decode(unsigned char *buf, size_t len, size_t *decoded_len)
 {
 	struct hpack_huffman_node	*node, *root;
-	unsigned int			 i, j, code;
+	unsigned int			 i, j, code, bits = 0, ones = 1;
 	struct hbuf			*hbuf = NULL;
 
 	if ((root = node = hpack_global.hpack_huffman) == NULL)
@@ -869,12 +869,23 @@ hpack_huffman_decode(unsigned char *buf, size_t len, size_t *decoded_len)
 
 		/* Walk the Huffman tree for each bit in the encoded input */
 		for (j = 8; j > 0; j--) {
+			bits++;
 			if ((code >> (j - 1)) & 1)
 				node = node->hpn_one;
-			else
+			else {
 				node = node->hpn_zero;
+				ones = 0;
+			}
+			if (node == NULL)
+				goto fail;
 			if (node->hpn_sym == -1)
 				continue;
+
+			/* RFC 7541 5.2: EOS in a string is an error */
+			if (node->hpn_sym == HPACK_HUFFMAN_SIZE - 1)
+				goto fail;
+			bits = 0;
+			ones = 1;
 
 			/* Leaf node of the next (8-bit ASCII) symbol */
 			if (hbuf_writechar(hbuf,
@@ -886,6 +897,10 @@ hpack_huffman_decode(unsigned char *buf, size_t len, size_t *decoded_len)
 			node = root;
 		}
 	}
+
+	/* The padding is a prefix of EOS: at most 7 bits, all ones */
+	if (bits > 7 || !ones)
+		goto fail;
 
 	return (hbuf_release(hbuf, decoded_len));
  fail:

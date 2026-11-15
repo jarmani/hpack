@@ -33,3 +33,28 @@ table 4096 new
 hex 3fe21f82
 fail
 end
+
+# test Huffman string with padding that is not all ones
+table 4096 new
+hex 008118811f
+fail
+end
+
+# test Huffman string with valid padding
+table 4096 new
+hex 00811f811f
+header a a
+size 0
+end
+
+# test Huffman string with more than 7 bits of padding
+table 4096 new
+hex 00821fff811f
+fail
+end
+
+# test Huffman string with EOS
+table 4096 new
+hex 0084ffffffff811f
+fail
+end
