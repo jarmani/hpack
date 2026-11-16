@@ -744,28 +744,19 @@ hpack_encode_int(struct hbuf *buf, long i, unsigned char prefix,
 
 	/* The first octet encodes up to prefix length bits */
 	m = ~prefix;
-	if (i <= m)
-		b = (i & m) | type;
-	else
-		b = m | type;
-	if (hbuf_writechar(buf, b) == -1)
+	if (i < m)
+		return (hbuf_writechar(buf, (i & m) | type));
+	if (hbuf_writechar(buf, m | type) == -1)
 		return (-1);
 	i -= m;
 
-	/* Encode the remainder as a varint */
-	for (m = 0x80; i >= m; i /= m) {
-		b = i % m + m;
-		/* Set the continuation bit if there are steps left */
-		if (i >= m)
-			b |= m;
+	/* Encode the remainder as a varint, the last octet may be 0 */
+	for (; i >= 0x80; i /= 0x80) {
+		b = (i % 0x80) | 0x80;
 		if (hbuf_writechar(buf, b) == -1)
 			return (-1);
 	}
-	if (i > 0 &&
-	    hbuf_writechar(buf, (unsigned char)i) == -1)
-		return (-1);
-
-	return (0);
+	return (hbuf_writechar(buf, (unsigned char)i));
 }
 
 static int
