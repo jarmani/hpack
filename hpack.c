@@ -226,7 +226,7 @@ hpack_table_getbyheader(struct hpack_header *key, struct hpack_index *idbuf,
 			firstid = idbuf;
 		}
 		if ((id->hpi_value != NULL && key->hdr_value != NULL) &&
-		    strcasecmp(id->hpi_value, key->hdr_value) == 0)
+		    strcmp(id->hpi_value, key->hdr_value) == 0)
 			return (id);
 	}
 
@@ -243,7 +243,7 @@ hpack_table_getbyheader(struct hpack_header *key, struct hpack_index *idbuf,
 			firstid = idbuf;
 		}
 		if ((hdr->hdr_value != NULL && key->hdr_value != NULL) &&
-		    strcasecmp(hdr->hdr_value, key->hdr_value) == 0) {
+		    strcmp(hdr->hdr_value, key->hdr_value) == 0) {
 			idbuf->hpi_id = dynidx;
 			idbuf->hpi_name = hdr->hdr_name;
 			idbuf->hpi_value = hdr->hdr_value;

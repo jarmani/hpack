@@ -69,3 +69,13 @@ end
 table 4096 new
 header x !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 end
+
+# test encoding of values that only differ in case, first
+table 4096 new
+header x-case abc
+end
+
+# test encoding of values that only differ in case, second
+table 4096 keep
+header x-case ABC
+end
