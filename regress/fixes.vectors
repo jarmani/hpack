@@ -58,3 +58,9 @@ table 4096 new
 hex 0084ffffffff811f
 fail
 end
+
+# test NUL in a literal string
+table 4096 new
+hex 000161026100
+fail
+end

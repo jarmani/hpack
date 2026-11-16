@@ -485,6 +485,8 @@ hpack_decode_str(struct hbuf *buf, unsigned char prefix)
 		if ((str = hpack_huffman_decode_str(ptr, (size_t)i)) == NULL)
 			return (NULL);
 	} else {
+		if (memchr(ptr, '\0', (size_t)i) != NULL)
+			return (NULL);
 		if ((str = calloc(1, (size_t)i + 1)) == NULL)
 			return (NULL);
 		memcpy(str, ptr, (size_t)i);
