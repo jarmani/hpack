@@ -2,6 +2,7 @@
 
 /*
  * Copyright (c) 2019 Reyk Floeter <reyk@openbsd.org>
+ * Copyright (c) 2026 Jonathan Armani <armani@openbsd.org>
  *
  * Permission to use, copy, modify, and distribute this software for any
  * purpose with or without fee is hereby granted, provided that the above
